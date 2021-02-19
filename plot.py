@@ -103,10 +103,10 @@ def plot(scan_path, scan_index=None, events={}, pressure_floor=2e-10):
     pressure_lines = []
 
     for m, (ts, ps) in sorted(mass_series.items()):
-        if m == 5: # I have no idea what this is?
+        if m == 5: # Pirani pressure??
             continue
         if m == 999: # I sure hope we never have to detect mass 999!
-            label = "Pirani pressure (uncalibrated)" 
+            label = "Total pressure" 
         elif m in MASS_GUESSES:
             label = "{} ({}?)".format(m, MASS_GUESSES[m])
         else:
