@@ -25,6 +25,63 @@ MASS_GUESSES = { # Used in legend labels.
     40: "Ar"
 }
 
+def parse_scans(scan_path):
+    """
+    Reads the file at scan_path and outputs a list of scans,
+    where each scan is a tuple of (xml_data, rows).
+    xml_data is an xml tree of the scan's metadata.
+    rows is a list of tuples of (time, mass, pressure) representing the data points.
+    """
+    with open(scan_path) as file:
+        raw_data = file.read()[:-1]
+
+    scans = []
+
+    for scan_data in ["<?" + i for i in raw_data.split("<?")][1:]: # need better variable names. what is data?
+
+        xml_length = scan_data.rindex(">") + 1
+        xml_data, csv_data = scan_data[:xml_length], scan_data[xml_length + 1:].strip()
+
+        xml_root = ET.fromstring(xml_data)
+
+        raw_rows = csv_data.split("\n")
+        if len(raw_rows) < 40:
+            print("Skipping tiny scan of length {}.".format(len(raw_rows)))
+            continue
+        
+        rows = []
+        t_0 = None
+        for raw_row in raw_rows:
+            # t means time, m means mass, p means pressure
+            raw_t, raw_m, raw_p = [i.strip() for i in raw_row[:-1].split(", ")]
+            
+            t = time.mktime(datetime.datetime.strptime(raw_t, "%Y/%m/%d %H:%M:%S.%f").timetuple())
+            if t_0 is None:
+                t_0 = t
+            t = t - t_0 # normalize time
+
+            # We'll need to change this if we ever monitor non-integer masses for some reason.
+            m = int(float(raw_m))
+            
+            p = float(raw_p)
+            
+            rows.append((t, m, p))
+        
+        scans.append((xml_root, rows))
+    
+    return scans
+
+def plot_file(scan_path, scan_index=None, events={}, pressure_floor=2e-10):
+    
+
+    if scan_index is None and len(scans) > 1:
+        print("Found {} scans in file.".format(len(scans)))
+        for i in range(len(scans)):
+            print("\nPlotting scan {}.".format(i))
+            plot(scan_path, i) # lazy
+        return
+    
+
 def plot(scan_path, scan_index=None, events={}, pressure_floor=2e-10):
     """
     Plots the scan_indexth scan in scan_path, labelling specified events.
@@ -44,56 +101,19 @@ def plot(scan_path, scan_index=None, events={}, pressure_floor=2e-10):
     Currently only plots trends. todo: implement mass sweep
     """
 
-    
-    
-    with open(scan_path) as file:
-        raw_data = file.read()[:-1]
+    scans = parse_scans(scan_path)
 
-    scan_datas = ["<?" + i for i in raw_data.split("<?")][1:]
-    if scan_index is None:
-        print("Found {} scans in file.".format(len(scan_datas)))
-        for i in range(len(scan_datas)):
-            print("\nPlotting scan {}.".format(i))
-            plot(scan_path, i)
-        return
-    scan_data = scan_datas[scan_index]
-
-    xml_length = scan_data.rindex(">") + 1
-    xml_data, csv_data = scan_data[:xml_length], scan_data[xml_length + 1:].strip()
-
-    xml_root = ET.fromstring(xml_data)
-    mode = xml_root.find("OperatingParameters").get("Mode")
-
-    raw_rows = csv_data.split("\n")
-    if len(raw_rows) < 40:
-        print("Skipping tiny scan of length {}.".format(len(raw_rows)))
-        return
-    
-    rows = []
-    t_0 = None
-    mass_series = {}
-    for raw_row in raw_rows:
-        # t means time, m means mass, p means pressure
-        raw_t, raw_m, raw_p = [i.strip() for i in raw_row[:-1].split(", ")]
-        
-        t = time.mktime(datetime.datetime.strptime(raw_t, "%Y/%m/%d %H:%M:%S.%f").timetuple())
-        if t_0 is None:
-            t_0 = t
-        t = t - t_0 # normalize time
-
-        # We'll need to change this if we ever monitor non-integer masses for some reason.
-        m = int(float(raw_m))
-        
-        p = float(raw_p)
-        
-        rows.append((t, m, p))
+    xml_root, rows = scans[scan_index]
 
     fig, ax = plt.subplots()
     ax.set_yscale("log")
     ax.set_ylabel("relative pressure (Pa)") # assuming that the rga is set to Pa
     ax.set_title("RGA: " + xml_root.find("ConfigurationParameters").get("DateTime"))
+
+    mode = xml_root.find("OperatingParameters").get("Mode")
     
     if mode == "Trend":
+        mass_series = {}
         for t, m, p in rows:
             if m not in mass_series:
                 mass_series[m] = [t], [p]
