@@ -43,6 +43,9 @@ def plot(scan_path, scan_index=None, events={}, pressure_floor=2e-10):
 
     Currently only plots trends. todo: implement mass sweep
     """
+
+    
+    
     with open(scan_path) as file:
         raw_data = file.read()[:-1]
 
@@ -60,9 +63,6 @@ def plot(scan_path, scan_index=None, events={}, pressure_floor=2e-10):
 
     xml_root = ET.fromstring(xml_data)
     mode = xml_root.find("OperatingParameters").get("Mode")
-    if mode != "Trend": # todo: implement mass sweep
-        print("Skipping mass sweep.")
-        return
 
     raw_rows = csv_data.split("\n")
     if len(raw_rows) < 40:
@@ -73,6 +73,7 @@ def plot(scan_path, scan_index=None, events={}, pressure_floor=2e-10):
     t_0 = None
     mass_series = {}
     for raw_row in raw_rows:
+        # t means time, m means mass, p means pressure
         raw_t, raw_m, raw_p = [i.strip() for i in raw_row[:-1].split(", ")]
         
         t = time.mktime(datetime.datetime.strptime(raw_t, "%Y/%m/%d %H:%M:%S.%f").timetuple())
@@ -84,45 +85,57 @@ def plot(scan_path, scan_index=None, events={}, pressure_floor=2e-10):
         m = int(float(raw_m))
         
         p = float(raw_p)
-
-        if m not in mass_series:
-            mass_series[m] = [t], [p]
-        else:
-            mass_series[m][0].append(t)
-            mass_series[m][1].append(p)
         
-        rows.append([t, m, p])
+        rows.append((t, m, p))
 
     fig, ax = plt.subplots()
-
     ax.set_yscale("log")
-    ax.set_xlabel("time (s)")
     ax.set_ylabel("relative pressure (Pa)") # assuming that the rga is set to Pa
     ax.set_title("RGA: " + xml_root.find("ConfigurationParameters").get("DateTime"))
+    
+    if mode == "Trend":
+        for t, m, p in rows:
+            if m not in mass_series:
+                mass_series[m] = [t], [p]
+            else:
+                mass_series[m][0].append(t)
+                mass_series[m][1].append(p)
 
-    pressure_lines = []
+        ax.set_xlabel("time (s)")
 
-    for m, (ts, ps) in sorted(mass_series.items()):
-        if m == 5: # Pirani pressure??
-            continue
-        if m == 999: # I sure hope we never have to detect mass 999!
-            label = "Total pressure" 
-        elif m in MASS_GUESSES:
-            label = "{} ({}?)".format(m, MASS_GUESSES[m])
-        else:
-            label = str(m)
-        pressure_lines.append(*ax.plot(ts, ps, label=label))
+        pressure_lines = []
 
-    event_lines = []
+        for m, (times, pressures) in sorted(mass_series.items()):
+            if m == 5: # Pirani pressure??
+                continue
+            if m == 999: # I sure hope we never have to detect mass 999!
+                label = "Total pressure" 
+            elif m in MASS_GUESSES:
+                label = "{} ({}?)".format(m, MASS_GUESSES[m])
+            else:
+                label = str(m)
+            pressure_lines.append(*ax.plot(times, pressures, label=label))
 
-    for t, label in events.items():
-        event_lines.append(ax.axvline(t, linestyle="--", label=label, color=next(ax._get_lines.prop_cycler)['color']))
+        event_lines = []
+
+        for t, label in events.items():
+            event_lines.append(ax.axvline(t, linestyle="--", label=label, color=next(ax._get_lines.prop_cycler)['color']))
+
+        fig.legend(handles = pressure_lines + event_lines) # arrange the legend
+    else:
+        masses = []
+        pressures = []
+        for t, m, p in rows:
+            masses.append(m)
+            pressures.append(p)
+
+        ax.bar(masses, pressures)
 
     # trim noise floor
     bottom, top = ax.get_ylim()
     ax.set_ylim(bottom=max(bottom, PRESSURE_FLOOR), top=top)
 
-    fig.legend(handles = pressure_lines + event_lines) # arrange the legend
+
     plt.show()
 
 
