@@ -16,7 +16,7 @@ EVENTS = {
 import datetime, time
 import matplotlib
 import matplotlib.pyplot as plt
-import numpy as np
+#import numpy as np
 import xml.etree.ElementTree as ET
 
 MASS_GUESSES = { # Used in legend labels.
@@ -25,7 +25,7 @@ MASS_GUESSES = { # Used in legend labels.
     40: "Ar"
 }
 
-def parse_scans(scan_path):
+def parse_scans(scan_path, normalize_time=True):
     """
     Reads the file at scan_path and outputs a list of scans,
     where each scan is a tuple of (xml_data, rows).
@@ -33,18 +33,17 @@ def parse_scans(scan_path):
     rows is a list of tuples of (time, mass, pressure) representing the data points.
     """
     with open(scan_path) as file:
-        raw_data = file.read()[:-1]
+        raw_scans = file.read()[:-1]
 
     scans = []
 
-    for scan_data in ["<?" + i for i in raw_data.split("<?")][1:]: # need better variable names. what is data?
+    for raw_scan in ["<?" + i for i in raw_scans.split("<?")][1:]:
 
-        xml_length = scan_data.rindex(">") + 1
-        xml_data, csv_data = scan_data[:xml_length], scan_data[xml_length + 1:].strip()
-
-        xml_root = ET.fromstring(xml_data)
-
-        raw_rows = csv_data.split("\n")
+        xml_length = raw_scan.rindex(">") + 1
+        xml_part, csv_part = raw_scan[:xml_length], raw_scan[xml_length + 1:].strip()
+        xml_root = ET.fromstring(xml_part)
+        raw_rows = csv_part.split("\n")
+        
         if len(raw_rows) < 40:
             print("Skipping tiny scan of length {}.".format(len(raw_rows)))
             continue
@@ -58,7 +57,8 @@ def parse_scans(scan_path):
             t = time.mktime(datetime.datetime.strptime(raw_t, "%Y/%m/%d %H:%M:%S.%f").timetuple())
             if t_0 is None:
                 t_0 = t
-            t = t - t_0 # normalize time
+            if normalize_time:
+                t = t - t_0 # normalize time
 
             # We'll need to change this if we ever monitor non-integer masses for some reason.
             m = int(float(raw_m))
@@ -69,20 +69,9 @@ def parse_scans(scan_path):
         
         scans.append((xml_root, rows))
     
-    return scans
+    return scans    
 
-def plot_file(scan_path, scan_index=None, events={}, pressure_floor=2e-10):
-    
-
-    if scan_index is None and len(scans) > 1:
-        print("Found {} scans in file.".format(len(scans)))
-        for i in range(len(scans)):
-            print("\nPlotting scan {}.".format(i))
-            plot(scan_path, i) # lazy
-        return
-    
-
-def plot(scan_path, scan_index=None, events={}, pressure_floor=2e-10):
+def plot_parsed_scan(scan, x_labels={}, pressure_floor=0):
     """
     Plots the scan_indexth scan in scan_path, labelling specified events.
     
@@ -101,9 +90,7 @@ def plot(scan_path, scan_index=None, events={}, pressure_floor=2e-10):
     Currently only plots trends. todo: implement mass sweep
     """
 
-    scans = parse_scans(scan_path)
-
-    xml_root, rows = scans[scan_index]
+    xml_root, rows = scan
 
     fig, ax = plt.subplots()
     ax.set_yscale("log")
@@ -138,7 +125,7 @@ def plot(scan_path, scan_index=None, events={}, pressure_floor=2e-10):
 
         event_lines = []
 
-        for t, label in events.items():
+        for t, label in x_labels.items():
             event_lines.append(ax.axvline(t, linestyle="--", label=label, color=next(ax._get_lines.prop_cycler)['color']))
 
         fig.legend(handles = pressure_lines + event_lines) # arrange the legend
@@ -153,18 +140,62 @@ def plot(scan_path, scan_index=None, events={}, pressure_floor=2e-10):
 
     # trim noise floor
     bottom, top = ax.get_ylim()
-    ax.set_ylim(bottom=max(bottom, PRESSURE_FLOOR), top=top)
+    ax.set_ylim(bottom=max(bottom, pressure_floor), top=top)
 
 
     plt.show()
 
+def plot_all_scans_in_file(scan_path):
+    """
+    Plots every scan in the file at scan_path.
+    Used to check contents of a scan file.
+    Use plot for more controlled plotting.
+    """
+    scans = parse_scans(scan_path)
+    
+    print("Found {} scans in file.".format(len(scans)))
+    for i, scan in enumerate(scans):
+        print("\nPlotting scan {}.".format(i))
+        plot_parsed_scan(scan)
+    return
+
+def plot(scan_path, scan_index=0, x_labels={}, pressure_floor=2e-10):
+    plot_parsed_scan(parse_scans(scan_path)[scan_index], x_labels, pressure_floor)
+
+def plot_sweeps_trend(scan_paths, masses, x_labels={}, pressure_floor=2e-10):
+    combined_rows = []
+    for scan_path in scan_paths:
+        xml_root, rows = parse_scan(scan_path, False)
+        assert xml_root.find("OperatingParameters").get("Mode") == "Mass sweep"
+        combined_rows.extend(rows)
+    combined_rows.sort() # sort by time
+    for row in combined_rows:
+        row[0] -= combined_rows[0][0] # normalize time
+
+    selected_rows = [row for row in combined_rows if row[1] in masses]
+
+    plot_parsed_scan((xml_root, selected_rows), masses, x_labels, pressure_floor)
+        
 
 EVENTS = { # time (in seconds): description. For example:  181: "turned on gun filament"
 }
 
-PRESSURE_FLOOR = 2e-10 # minimum of y axis. if minimum pressure is above this, use that instead.
-
 SCAN_PATH = "rga_data/MassSpecData-06507-20210210-171042.csv"
 SCAN_INDEX = None # each file can contain multiple scans due to a bug in the software.
 
-plot(SCAN_PATH, SCAN_INDEX, EVENTS, PRESSURE_FLOOR)
+#plot(SCAN_PATH, SCAN_INDEX, EVENTS)
+
+#plot_all_scans_in_file(SCAN_PATH)
+
+if 1:
+    plot(
+        "rga_data/MassSpecData-06507-20210210-171042.csv",
+        3,
+        {
+            181: "turned on gun filament",
+            289: "opened Ar leak valve, turned off ion pump",
+            349: "closed Ar leak valve",
+            370: "turned up gun",
+            569: "turned off gun, turned on ion pump"
+        }
+    )
