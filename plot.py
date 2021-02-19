@@ -25,6 +25,14 @@ MASS_GUESSES = { # Used in legend labels.
     40: "Ar"
 }
 
+
+# Try to give every mass we're gonna plot a unique and consistent color, loosely related to its magnitude.
+# This way, different graphs in the paper use consistent colors for masses.
+expected_masses = (2, 12, 16, 17, 28, 40, 44)
+cmap = matplotlib.cm.get_cmap("plasma")
+MASS_PALETTE = {mass: cmap(i / len(expected_masses)) for i, mass in enumerate(expected_masses)}
+MASS_PALETTE[999] = "grey" # total pressure
+                
 def parse_scans(scan_path, normalize_time=True):
     """
     Reads the file at scan_path and outputs a list of scans,
@@ -43,10 +51,6 @@ def parse_scans(scan_path, normalize_time=True):
         xml_part, csv_part = raw_scan[:xml_length], raw_scan[xml_length + 1:].strip()
         xml_root = ET.fromstring(xml_part)
         raw_rows = csv_part.split("\n")
-        
-        if len(raw_rows) < 40:
-            print("Skipping tiny scan of length {}.".format(len(raw_rows)))
-            continue
         
         rows = []
         t_0 = None
@@ -100,6 +104,8 @@ def plot_parsed_scan(scan, x_labels={}, pressure_floor=0):
     mode = xml_root.find("OperatingParameters").get("Mode")
     
     if mode == "Trend":
+        ax.set_xlabel("time (s)")
+        
         mass_series = {}
         for t, m, p in rows:
             if m not in mass_series:
@@ -108,20 +114,21 @@ def plot_parsed_scan(scan, x_labels={}, pressure_floor=0):
                 mass_series[m][0].append(t)
                 mass_series[m][1].append(p)
 
-        ax.set_xlabel("time (s)")
-
         pressure_lines = []
-
-        for m, (times, pressures) in sorted(mass_series.items()):
+        for i, (m, (times, pressures)) in enumerate(sorted(mass_series.items())):
             if m == 5: # Pirani pressure??
                 continue
+            
             if m == 999: # I sure hope we never have to detect mass 999!
-                label = "Total pressure" 
-            elif m in MASS_GUESSES:
-                label = "{} ({}?)".format(m, MASS_GUESSES[m])
+                label = "Total pressure"
             else:
-                label = str(m)
-            pressure_lines.append(*ax.plot(times, pressures, label=label))
+                if m in MASS_GUESSES:
+                    label = "{} ({}?)".format(m, MASS_GUESSES[m])
+                else:
+                    label = str(m)
+                color=cmap(i/len(mass_series))
+                
+            pressure_lines.append(*ax.plot(times, pressures, label=label, color=MASS_PALETTE.get(m)))
 
         event_lines = []
 
@@ -130,6 +137,8 @@ def plot_parsed_scan(scan, x_labels={}, pressure_floor=0):
 
         fig.legend(handles = pressure_lines + event_lines) # arrange the legend
     else:
+        ax.set_xlabel("mass (amu)")
+        
         masses = []
         pressures = []
         for t, m, p in rows:
@@ -155,6 +164,9 @@ def plot_all_scans_in_file(scan_path):
     
     print("Found {} scans in file.".format(len(scans)))
     for i, scan in enumerate(scans):
+        if len(scan[1]) < 40:
+            print("Skipping tiny scan of length {}.".format(len(scan[1])))
+            continue
         print("\nPlotting scan {}.".format(i))
         plot_parsed_scan(scan)
     return
@@ -190,7 +202,7 @@ SCAN_INDEX = None # each file can contain multiple scans due to a bug in the sof
 if 1:
     plot(
         "rga_data/MassSpecData-06507-20210210-171042.csv",
-        3,
+        6,
         {
             181: "turned on gun filament",
             289: "opened Ar leak valve, turned off ion pump",
