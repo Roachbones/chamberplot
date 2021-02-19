@@ -2,17 +2,6 @@
 # todo: investigate float imprecision?
 # todo: calibrate Pirani pressure
 
-"""
-SCAN_PATH = "/home/rose/Documents/capstone/rga/MassSpecData-06507-20210210-171042.csv"
-EVENTS = {
-    181: "turned on gun filament",
-    289: "opened Ar leak valve, turned off ion pump",
-    349: "closed Ar leak valve",
-    370: "turned up gun",
-    569: "turned off gun, turned on ion pump"
-}
-"""
-
 import datetime, time
 import matplotlib
 import matplotlib.pyplot as plt
@@ -29,10 +18,12 @@ MASS_GUESSES = { # Used in legend labels.
 # Try to give every mass we're gonna plot a unique and consistent color, loosely related to its magnitude.
 # This way, different graphs in the paper use consistent colors for masses.
 expected_masses = (2, 12, 16, 17, 28, 40, 44)
-cmap = matplotlib.cm.get_cmap("plasma")
-MASS_PALETTE = {mass: cmap(i / len(expected_masses)) for i, mass in enumerate(expected_masses)}
+mass_cmap = matplotlib.cm.get_cmap("plasma")
+MASS_PALETTE = {mass: mass_cmap(i / len(expected_masses)) for i, mass in enumerate(expected_masses)}
 MASS_PALETTE[999] = "grey" # total pressure
-                
+
+x_label_cmap = matplotlib.cm.get_cmap("viridis")
+
 def parse_scans(scan_path, normalize_time=True):
     """
     Reads the file at scan_path and outputs a list of scans,
@@ -90,8 +81,6 @@ def plot_parsed_scan(scan, x_labels={}, pressure_floor=0):
         }
     pressure_floor: y-axis minimum bound.
         Overridden if the absolute minimum of the data exceeds it.
-
-    Currently only plots trends. todo: implement mass sweep
     """
 
     xml_root, rows = scan
@@ -126,14 +115,14 @@ def plot_parsed_scan(scan, x_labels={}, pressure_floor=0):
                     label = "{} ({}?)".format(m, MASS_GUESSES[m])
                 else:
                     label = str(m)
-                color=cmap(i/len(mass_series))
                 
             pressure_lines.append(*ax.plot(times, pressures, label=label, color=MASS_PALETTE.get(m)))
 
         event_lines = []
 
-        for t, label in x_labels.items():
-            event_lines.append(ax.axvline(t, linestyle="--", label=label, color=next(ax._get_lines.prop_cycler)['color']))
+        for i, (t, label) in enumerate(x_labels.items()):
+            event_lines.append(ax.axvline(t, linestyle="--", label=label, color=x_label_cmap(i / len(x_labels))))
+            # todo: x_labels should have a better name
 
         fig.legend(handles = pressure_lines + event_lines) # arrange the legend
     else:
@@ -149,7 +138,8 @@ def plot_parsed_scan(scan, x_labels={}, pressure_floor=0):
 
     # trim noise floor
     bottom, top = ax.get_ylim()
-    ax.set_ylim(bottom=max(bottom, pressure_floor), top=top)
+    print(bottom, top, pressure_floor)
+    #ax.set_ylim(bottom=max(bottom, pressure_floor), top=top)
 
 
     plt.show()
@@ -171,7 +161,25 @@ def plot_all_scans_in_file(scan_path):
         plot_parsed_scan(scan)
     return
 
-def plot(scan_path, scan_index=0, x_labels={}, pressure_floor=2e-10):
+def plot(scan_path, scan_index=0, x_labels={},pressure_floor=2e-10):
+    """
+    Plots the scan_indexth scan in scan_path, labelling specified events.
+    
+    scan_path: path to an RGA output file.
+    scan_index: ordinal of the scan in the file. Use plot_all_scans_in_file to plot every scan.
+    x_labels: specifies vertical bars to plot and label.
+        For a trend scan:
+            Dictionary. Each key is a timestamp, in seconds. Each value is a string description
+            of the event that happened at that time. For example:
+            {
+                181: "turned on gun filament",
+                289: "turned off ion pump"
+            }
+        For a mass sweep scan:
+            Iterable of masses to label, using MASS_GUESSES. For example: [2, 40]
+    pressure_floor: y-axis minimum bound.
+        Overridden if the absolute minimum of the data exceeds it.
+    """
     plot_parsed_scan(parse_scans(scan_path)[scan_index], x_labels, pressure_floor)
 
 def plot_sweeps_trend(scan_paths, masses, x_labels={}, pressure_floor=2e-10):
