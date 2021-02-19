@@ -131,7 +131,7 @@ EVENTS = { # time (in seconds): description. For example:  181: "turned on gun f
 
 PRESSURE_FLOOR = 2e-10 # minimum of y axis. if minimum pressure is above this, use that instead.
 
-SCAN_PATH = "/home/rose/Documents/capstone/rga/MassSpecData-06507-20210210-171042.csv"
+SCAN_PATH = "rga_data/MassSpecData-06507-20210210-171042.csv"
 SCAN_INDEX = None # each file can contain multiple scans due to a bug in the software.
 
 plot(SCAN_PATH, SCAN_INDEX, EVENTS, PRESSURE_FLOOR)
