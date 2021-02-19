@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<ConfigurationData>
+   <CommunicationParameters
+      Port="COM3"
+      Baud="9600"
+      PacketFrequency="5.0"
+      PacketTimeout="1.0"
+      CommunicationsType="1"
+      UserFrequency="5.0"
+      UserTimeout="1.0"
+      NamedPort=""
+   />
+
+   <ConfigurationParameters
+      Filename="C:\Users\cxh002\Desktop\RGA CONFIG FILES\rga_working_cal.cfg"
+      Description="Air Leak + PTA"
+      TimeStamp="07e5000100040007000b0010002a0083"
+      DateTime="1/7/2021 11:16:42 AM"
+      Caption="6507"
+      Serial="6507"
+      Model="300"
+   />
+
+   <ScanParameters
+      ScanSpeed="10"
+      LowMass="1"
+      HighMass="110"
+      SamplesPerAMU="6"
+   />
+
+   <OperatingParameters
+      Mode="Mass sweep"
+      Focus1="-20"
+      Focus2="-68"
+      ElectronEnergy="70"
+      FilamentEmission="2.0"
+      AutoZero="Off"
+      ScanMode="Sweep"
+      Filament="1"
+      PressureUnits="Pascal"
+      EnableElectronMultiplier="1"
+      MultiplierVoltage="1095"
+      FilamentForceOffStartup="1"
+   />
+
+   <CalibrationParameters
+      LowCalMass="1"
+      LowCalResolution="572"
+      LowCalPosition="0.44"
+      LowCalIonEnergy="5.0"
+      HighCalMass="300"
+      HighCalResolution="1670"
+      HighCalPosition="0.40"
+      HighCalIonEnergy="5.0"
+      TotalAmpOffset="2000"
+      PartialAmpOffset="2475"
+      TotalIntegratingCap="10.00"
+      PartialIntegratingCap="3.00"
+      RFSettleTime="50"
+      SWSettleTime="10"
+      Pirani1ATM="1.98700"
+      PiraniZero="0.31300"
+      PiraniAutoRecalibrate="0"
+      PartialSensitivity="6.00e-004"
+      TotalSensitivity="1.00e+001"
+      debug="0"
+   />
+
+   <LogFileParameters
+      Mode="2"
+      FileName=""
+      DirectoryName="C:\Users\cxh002\Desktop\rga_data"
+      CreationOption="0"
+      NSweeps="1"
+      FileRecordingOn="1"
+   />
+
+
+   <PrintingParameters
+      InvertColors="1"
+      ShowConfigurationFile="1"
+      ShowDescription="1"
+      ShowTotalPressure="1"
+      ShowPiraniPressure="1"
+      DateFormat=""
+      TimeFormat=""
+   />
+
+
+   <WindowParameters>
+       <Frame
+            flags="2"
+            showCmd="3"
+            ptMinPosition.x="-1"
+            ptMinPosition.y="-1"
+            ptMaxPosition.x="-8"
+            ptMaxPosition.y="-31"
+            rcNormalPosition.left="26"
+            rcNormalPosition.top="68"
+            rcNormalPosition.right="910"
+            rcNormalPosition.bottom="417"
+       />
+       <Setup
+            flags="0"
+            showCmd="1"
+            ptMinPosition.x="-1"
+            ptMinPosition.y="-1"
+            ptMaxPosition.x="-1"
+            ptMaxPosition.y="-1"
+            rcNormalPosition.left="659"
+            rcNormalPosition.top="50"
+            rcNormalPosition.right="1362"
+            rcNormalPosition.bottom="610"
+       />
+       <Main
+            flags="2"
+            showCmd="3"
+            ptMinPosition.x="-1"
+            ptMinPosition.y="-1"
+            ptMaxPosition.x="-1"
+            ptMaxPosition.y="-1"
+            rcNormalPosition.left="52"
+            rcNormalPosition.top="52"
+            rcNormalPosition.right="1077"
+            rcNormalPosition.bottom="577"
+       />
+   </WindowParameters>
+
+   <PlotParameters
+      BkColor="Silver"
+      LineColor="Teal"
+      ScanColor="Black"
+      MouseWheel="0"
+      LogYAxis="1"
+   />
+
+</ConfigurationData>
+2021/01/07 11:17:49.140,    0.667,  2.0517e-002,
+2021/01/07 11:17:49.240,    0.833,  2.1349e-002,
+2021/01/07 11:17:49.340,    1.000,  2.0477e-002,
+2021/01/07 11:17:49.440,    1.167,  2.4057e-002,
+2021/01/07 11:17:49.540,    1.333,  2.5508e-002,
+2021/01/07 11:17:49.640,    1.500,  2.4988e-002,
+2021/01/07 11:17:49.740,    1.667,  2.5384e-002,
+2021/01/07 11:17:49.840,    1.833,  2.4946e-002,
+2021/01/07 11:17:49.940,    2.000,  2.3114e-002,
+2021/01/07 11:17:50.040,    2.167,  1.9678e-002,
+2021/01/07 11:17:50.140,    2.333,  1.4788e-002,
+2021/01/07 11:17:50.240,    2.500,  7.1385e-003,
+2021/01/07 11:17:50.340,    2.667,  3.0160e-005,
+2021/01/07 11:17:50.440,    2.833,  2.9893e-005,
+2021/01/07 11:17:50.540,    3.000,  2.7197e-005,
+2021/01/07 11:17:50.640,    3.167,  2.4319e-005,
+2021/01/07 11:17:50.740,    3.333,  1.9166e-005,
+2021/01/07 11:17:50.840,    3.500,  1.0363e-005,
+2021/01/07 11:17:50.940,    3.667,  1.6830e-007,
+2021/01/07 11:17:51.040,    3.833,  2.1561e-007,
+2021/01/07 11:17:51.140,    4.000,  1.6509e-007,
+2021/01/07 11:17:51.240,    4.167,  1.4887e-007,
+2021/01/07 11:17:51.340,    4.333,  1.2661e-007,
+2021/01/07 11:17:51.440,    4.500,  6.4160e-008,
+2021/01/07 11:17:51.540,    4.667,  5.9376e-009,
+2021/01/07 11:17:51.640,    4.833,  8.5000e-009,
+2021/01/07 11:17:51.740,    5.000,  6.7994e-009,
+2021/01/07 11:17:51.840,    5.167,  1.2493e-008,

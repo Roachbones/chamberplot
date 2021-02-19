@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<ConfigurationData>
+   <CommunicationParameters
+      Port="COM3"
+      Baud="9600"
+      PacketFrequency="5.0"
+      PacketTimeout="1.0"
+      CommunicationsType="1"
+      UserFrequency="5.0"
+      UserTimeout="1.0"
+      NamedPort=""
+   />
+
+   <ConfigurationParameters
+      Filename="C:\Users\cxh002\Desktop\RGA CONFIG FILES\rga_working_cal.cfg"
+      Description="Air Leak + PTA"
+      TimeStamp="07e5000100050008000c002b00140036"
+      DateTime="1/8/2021 12:43:20 PM"
+      Caption="6507"
+      Serial="6507"
+      Model="300"
+   />
+
+   <ScanParameters
+      ScanSpeed="10"
+      LowMass="1"
+      HighMass="60"
+      SamplesPerAMU="6"
+   />
+
+   <OperatingParameters
+      Mode="Trend"
+      Focus1="-20"
+      Focus2="-68"
+      ElectronEnergy="70"
+      FilamentEmission="0.1"
+      AutoZero="Off"
+      ScanMode="Sweep"
+      Filament="0"
+      PressureUnits="Pascal"
+      EnableElectronMultiplier="0"
+      MultiplierVoltage="1095"
+      FilamentForceOffStartup="1"
+   />
+
+   <CalibrationParameters
+      LowCalMass="1"
+      LowCalResolution="572"
+      LowCalPosition="0.44"
+      LowCalIonEnergy="5.0"
+      HighCalMass="300"
+      HighCalResolution="1670"
+      HighCalPosition="0.40"
+      HighCalIonEnergy="5.0"
+      TotalAmpOffset="2000"
+      PartialAmpOffset="2475"
+      TotalIntegratingCap="10.00"
+      PartialIntegratingCap="3.00"
+      RFSettleTime="50"
+      SWSettleTime="10"
+      Pirani1ATM="1.98700"
+      PiraniZero="0.31300"
+      PiraniAutoRecalibrate="0"
+      PartialSensitivity="6.00e-004"
+      TotalSensitivity="1.00e+001"
+      debug="0"
+   />
+
+   <LogFileParameters
+      Mode="2"
+      FileName=""
+      DirectoryName="C:\Users\cxh002\Desktop\rga_data"
+      CreationOption="0"
+      NSweeps="1"
+      FileRecordingOn="1"
+   />
+
+
+   <PrintingParameters
+      InvertColors="1"
+      ShowConfigurationFile="1"
+      ShowDescription="1"
+      ShowTotalPressure="1"
+      ShowPiraniPressure="1"
+      DateFormat=""
+      TimeFormat=""
+   />
+
+
+   <WindowParameters>
+       <Frame
+            flags="2"
+            showCmd="3"
+            ptMinPosition.x="-1"
+            ptMinPosition.y="-1"
+            ptMaxPosition.x="-8"
+            ptMaxPosition.y="-31"
+            rcNormalPosition.left="26"
+            rcNormalPosition.top="68"
+            rcNormalPosition.right="910"
+            rcNormalPosition.bottom="417"
+       />
+       <Setup
+            flags="0"
+            showCmd="1"
+            ptMinPosition.x="-1"
+            ptMinPosition.y="-1"
+            ptMaxPosition.x="-1"
+            ptMaxPosition.y="-1"
+            rcNormalPosition.left="659"
+            rcNormalPosition.top="50"
+            rcNormalPosition.right="1362"
+            rcNormalPosition.bottom="610"
+       />
+       <Main
+            flags="2"
+            showCmd="3"
+            ptMinPosition.x="-1"
+            ptMinPosition.y="-1"
+            ptMaxPosition.x="-1"
+            ptMaxPosition.y="-1"
+            rcNormalPosition.left="52"
+            rcNormalPosition.top="52"
+            rcNormalPosition.right="1077"
+            rcNormalPosition.bottom="577"
+       />
+   </WindowParameters>
+
+   <PlotParameters
+      BkColor="Silver"
+      LineColor="Teal"
+      ScanColor="Black"
+      MouseWheel="0"
+      LogYAxis="1"
+   />
+
+</ConfigurationData>
+2021/01/08 12:43:20.894,  999.000,  7.2634e-007,
+2021/01/08 12:43:20.998,    2.000,  5.6748e-009,
+2021/01/08 12:43:21.998,   12.000,  6.0322e-009,
+2021/01/08 12:43:22.998,   16.000,  4.2816e-009,
+2021/01/08 12:43:23.998,   17.000,  3.2031e-009,
+2021/01/08 12:43:24.248,   28.000,  3.3075e-009,
+2021/01/08 12:43:25.248,   40.000,  4.7381e-009,
+2021/01/08 12:43:26.248,   44.000,  7.6482e-009,

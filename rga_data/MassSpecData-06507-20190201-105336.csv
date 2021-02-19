@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<ConfigurationData>
+   <CommunicationParameters
+      Port="COM3"
+      Baud="9600"
+      PacketFrequency="5.0"
+      PacketTimeout="1.0"
+      CommunicationsType="1"
+      UserFrequency="5.0"
+      UserTimeout="1.0"
+      NamedPort=""
+   />
+
+   <ConfigurationParameters
+      Filename="C:\Users\cxh002\Desktop\RGA CONFIG FILES\rga_working_cal.cfg"
+      Description="Air Leak + PTA"
+      TimeStamp="07e3000200050001000a000100360028"
+      DateTime="2/1/2019 10:01:54 AM"
+      Caption="6507"
+      Serial="6507"
+      Model="300"
+   />
+
+   <ScanParameters
+      ScanSpeed="2"
+      LowMass="1"
+      HighMass="310"
+      SamplesPerAMU="10"
+   />
+
+   <OperatingParameters
+      Mode="Mass sweep"
+      Focus1="-20"
+      Focus2="-68"
+      ElectronEnergy="70"
+      FilamentEmission="2.0"
+      AutoZero="Off"
+      ScanMode="Sweep"
+      Filament="1"
+      PressureUnits="Pascal"
+      EnableElectronMultiplier="1"
+      MultiplierVoltage="1095"
+      FilamentForceOffStartup="0"
+   />
+
+   <CalibrationParameters
+      LowCalMass="1"
+      LowCalResolution="572"
+      LowCalPosition="0.44"
+      LowCalIonEnergy="5.0"
+      HighCalMass="300"
+      HighCalResolution="1670"
+      HighCalPosition="0.40"
+      HighCalIonEnergy="5.0"
+      TotalAmpOffset="2000"
+      PartialAmpOffset="2475"
+      TotalIntegratingCap="10.00"
+      PartialIntegratingCap="3.00"
+      RFSettleTime="50"
+      SWSettleTime="10"
+      Pirani1ATM="1.98700"
+      PiraniZero="0.31300"
+      PiraniAutoRecalibrate="0"
+      PartialSensitivity="6.00e-004"
+      TotalSensitivity="1.00e+001"
+      debug="0"
+   />
+
+   <LogFileParameters
+      Mode="2"
+      FileName=""
+      DirectoryName="C:\Users\cxh002\Desktop\rga_data"
+      CreationOption="0"
+      NSweeps="1"
+      FileRecordingOn="1"
+   />
+
+
+   <PrintingParameters
+      InvertColors="1"
+      ShowConfigurationFile="1"
+      ShowDescription="1"
+      ShowTotalPressure="1"
+      ShowPiraniPressure="1"
+      DateFormat=""
+      TimeFormat=""
+   />
+
+
+   <WindowParameters>
+       <Frame
+            flags="2"
+            showCmd="3"
+            ptMinPosition.x="-1"
+            ptMinPosition.y="-1"
+            ptMaxPosition.x="-8"
+            ptMaxPosition.y="-31"
+            rcNormalPosition.left="26"
+            rcNormalPosition.top="68"
+            rcNormalPosition.right="910"
+            rcNormalPosition.bottom="417"
+       />
+       <Setup
+            flags="0"
+            showCmd="1"
+            ptMinPosition.x="-1"
+            ptMinPosition.y="-1"
+            ptMaxPosition.x="-1"
+            ptMaxPosition.y="-1"
+            rcNormalPosition.left="659"
+            rcNormalPosition.top="50"
+            rcNormalPosition.right="1362"
+            rcNormalPosition.bottom="610"
+       />
+       <Main
+            flags="2"
+            showCmd="3"
+            ptMinPosition.x="-1"
+            ptMinPosition.y="-1"
+            ptMaxPosition.x="-1"
+            ptMaxPosition.y="-1"
+            rcNormalPosition.left="104"
+            rcNormalPosition.top="104"
+            rcNormalPosition.right="1129"
+            rcNormalPosition.bottom="629"
+       />
+   </WindowParameters>
+
+   <PlotParameters
+      BkColor="Silver"
+      LineColor="Teal"
+      ScanColor="Black"
+      MouseWheel="0"
+      LogYAxis="1"
+   />
+
+</ConfigurationData>
+2019/02/01 10:53:35.712,    0.600,  1.7079e-003,
+2019/02/01 10:53:36.212,    0.700,  1.7214e-003,
+2019/02/01 10:53:36.712,    0.800,  1.7291e-003,
+2019/02/01 10:53:37.212,    0.900,  1.6728e-003,
+2019/02/01 10:53:37.712,    1.000,  1.6828e-003,
+2019/02/01 10:53:38.212,    1.100,  1.9267e-003,
+2019/02/01 10:53:38.712,    1.200,  2.0107e-003,
+2019/02/01 10:53:39.212,    1.300,  2.0332e-003,
+2019/02/01 10:53:39.712,    1.400,  2.0025e-003,
+2019/02/01 10:53:40.212,    1.500,  2.0325e-003,
+2019/02/01 10:53:40.712,    1.600,  2.0903e-003,
+2019/02/01 10:53:41.212,    1.700,  2.0465e-003,
+2019/02/01 10:53:41.712,    1.800,  2.1651e-003,
+2019/02/01 10:53:42.212,    1.900,  2.0723e-003,
+2019/02/01 10:53:42.712,    2.000,  1.8814e-003,
+2019/02/01 10:53:43.212,    2.100,  1.7032e-003,
+2019/02/01 10:53:43.712,    2.200,  1.5213e-003,
+2019/02/01 10:53:44.212,    2.300,  1.2441e-003,
+2019/02/01 10:53:44.712,    2.400,  9.4489e-004,
+2019/02/01 10:53:45.212,    2.500,  3.5658e-004,
+2019/02/01 10:53:45.712,    2.600,  1.6185e-006,
+2019/02/01 10:53:46.212,    2.700,  1.7705e-006,
+2019/02/01 10:53:46.712,    2.800,  1.7774e-006,
+2019/02/01 10:53:47.212,    2.900,  1.8112e-006,
+2019/02/01 10:53:47.712,    3.000,  1.7082e-006,
+2019/02/01 10:53:48.212,    3.100,  1.5523e-006,
+2019/02/01 10:53:48.712,    3.200,  1.3835e-006,
+2019/02/01 10:53:49.212,    3.300,  1.2106e-006,
+2019/02/01 10:53:49.712,    3.400,  9.1940e-007,
+2019/02/01 10:53:50.212,    3.500,  3.2486e-007,
+2019/02/01 10:53:50.712,    3.600,  1.5193e-008,
+2019/02/01 10:53:51.212,    3.700,  1.3798e-008,
+2019/02/01 10:53:51.712,    3.800,  1.4381e-008,
+2019/02/01 10:53:52.212,    3.900,  1.8439e-008,
+2019/02/01 10:53:52.712,    4.000,  1.5759e-008,
+2019/02/01 10:53:53.212,    4.100,  1.6192e-008,
+2019/02/01 10:53:53.712,    4.200,  1.4834e-008,
+2019/02/01 10:53:54.212,    4.300,  1.2229e-008,
+2019/02/01 10:53:54.712,    4.400,  7.2028e-009,
+2019/02/01 10:53:55.212,    4.500,  1.5353e-009,
+2019/02/01 10:53:55.712,    4.600,  1.4619e-009,
+2019/02/01 10:53:56.212,    4.700,  2.3066e-009,
+2019/02/01 10:53:56.712,    4.800,  1.9211e-009,
+2019/02/01 10:53:57.212,    4.900,  1.6960e-009,
+2019/02/01 10:53:57.712,    5.000,  8.4142e-010,
+2019/02/01 10:53:58.212,    5.100,  1.7890e-009,
+2019/02/01 10:53:58.712,    5.200,  0.0000e+000,
+2019/02/01 10:53:59.212,    5.300,  1.2498e-008,
+2019/02/01 10:53:59.712,    5.400,  4.9044e-009,
+2019/02/01 10:54:00.212,    5.500,  4.6702e-008,
+2019/02/01 10:54:00.712,    5.600,  1.4646e-007,
+2019/02/01 10:54:01.212,    5.700,  1.6955e-007,
+2019/02/01 10:54:01.712,    5.800,  1.7727e-007,
+2019/02/01 10:54:02.212,    5.900,  1.7024e-007,
+2019/02/01 10:54:02.712,    6.000,  1.6670e-007,
+2019/02/01 10:54:03.212,    6.100,  1.4883e-007,
+2019/02/01 10:54:03.712,    6.200,  1.4910e-007,
+2019/02/01 10:54:04.212,    6.300,  1.3932e-007,
+2019/02/01 10:54:04.712,    6.400,  8.2968e-008,
+2019/02/01 10:54:05.212,    6.500,  2.4101e-008,
+2019/02/01 10:54:05.712,    6.600,  7.3144e-008,
+2019/02/01 10:54:06.212,    6.700,  9.5982e-008,
+2019/02/01 10:54:06.712,    6.800,  8.9690e-008,
+2019/02/01 10:54:07.212,    6.900,  1.1190e-007,
+2019/02/01 10:54:07.712,    7.000,  1.0073e-007,
+2019/02/01 10:54:08.212,    7.100,  8.7321e-008,
+2019/02/01 10:54:08.712,    7.200,  8.0199e-008,
+2019/02/01 10:54:09.212,    7.300,  6.6329e-008,
+2019/02/01 10:54:09.712,    7.400,  4.4018e-008,
+2019/02/01 10:54:10.212,    7.500,  5.1202e-009,
+2019/02/01 10:54:10.712,    7.600,  1.7930e-008,
+2019/02/01 10:54:11.212,    7.700,  1.9528e-008,
+2019/02/01 10:54:11.712,    7.800,  2.5452e-008,
+2019/02/01 10:54:12.212,    7.900,  1.9510e-008,
+2019/02/01 10:54:12.712,    8.000,  3.0179e-008,
+2019/02/01 10:54:13.212,    8.100,  2.7727e-008,
+2019/02/01 10:54:13.712,    8.200,  4.0079e-008,
+2019/02/01 10:54:14.212,    8.300,  3.5111e-008,
+2019/02/01 10:54:14.712,    8.400,  2.8396e-008,
+2019/02/01 10:54:15.212,    8.500,  1.3632e-008,
+2019/02/01 10:54:15.712,    8.600,  1.4606e-008,
+2019/02/01 10:54:16.212,    8.700,  1.6051e-008,
+2019/02/01 10:54:16.712,    8.800,  1.2934e-008,
+2019/02/01 10:54:17.212,    8.900,  1.1954e-008,
+2019/02/01 10:54:17.712,    9.000,  0.0000e+000,
+2019/02/01 10:54:18.212,    9.100,  1.8784e-009,
+2019/02/01 10:54:18.712,    9.200,  0.0000e+000,
+2019/02/01 10:54:19.212,    9.300,  1.1735e-009,
+2019/02/01 10:54:19.712,    9.400,  0.0000e+000,
+2019/02/01 10:54:20.212,    9.500,  0.0000e+000,
+2019/02/01 10:54:20.712,    9.600,  3.0739e-009,
+2019/02/01 10:54:21.212,    9.700,  1.7669e-009,
+2019/02/01 10:54:21.712,    9.800,  9.7503e-009,
+2019/02/01 10:54:22.212,    9.900,  2.3672e-009,
+2019/02/01 10:54:22.712,   10.000,  4.7541e-009,
+2019/02/01 10:54:23.212,   10.100,  3.7979e-009,
+2019/02/01 10:54:23.712,   10.200,  4.0657e-009,
+2019/02/01 10:54:24.212,   10.300,  4.6860e-009,
+2019/02/01 10:54:24.712,   10.400,  5.9021e-010,
+2019/02/01 10:54:25.212,   10.500,  3.2074e-009,
+2019/02/01 10:54:25.712,   10.600,  2.3879e-009,
+2019/02/01 10:54:26.212,   10.700,  2.8510e-009,
+2019/02/01 10:54:26.712,   10.800,  1.5785e-009,
+2019/02/01 10:54:27.212,   10.900,  5.7307e-009,
+2019/02/01 10:54:27.712,   11.000,  4.4279e-009,
+2019/02/01 10:54:28.212,   11.100,  7.7346e-009,
+2019/02/01 10:54:28.712,   11.200,  1.6947e-008,
+2019/02/01 10:54:29.212,   11.300,  4.3464e-007,
+2019/02/01 10:54:29.712,   11.400,  2.6986e-007,
+2019/02/01 10:54:30.212,   11.500,  1.3840e-006,
+2019/02/01 10:54:30.712,   11.600,  5.8496e-006,
+2019/02/01 10:54:31.212,   11.700,  7.5425e-006,
+2019/02/01 10:54:31.712,   11.800,  7.9341e-006,
+2019/02/01 10:54:32.212,   11.900,  8.2012e-006,
+2019/02/01 10:54:32.712,   12.000,  7.8121e-006,
+2019/02/01 10:54:33.212,   12.100,  7.2741e-006,
+2019/02/01 10:54:33.712,   12.200,  6.3774e-006,
+2019/02/01 10:54:34.212,   12.300,  5.4000e-006,
+2019/02/01 10:54:34.712,   12.400,  3.5477e-006,
+2019/02/01 10:54:35.212,   12.500,  4.7356e-007,
+2019/02/01 10:54:35.712,   12.600,  1.5523e-006,
+2019/02/01 10:54:36.212,   12.700,  2.0967e-006,
+2019/02/01 10:54:36.712,   12.800,  2.3256e-006,
+2019/02/01 10:54:37.212,   12.900,  2.5681e-006,
+2019/02/01 10:54:37.712,   13.000,  2.6314e-006,
+2019/02/01 10:54:38.212,   13.100,  2.5615e-006,
+2019/02/01 10:54:38.712,   13.200,  2.3366e-006,
+2019/02/01 10:54:39.212,   13.300,  2.4289e-006,
+2019/02/01 10:54:39.712,   13.400,  1.8242e-006,
+2019/02/01 10:54:40.212,   13.500,  2.1041e-006,
+2019/02/01 10:54:40.712,   13.600,  7.2664e-006,
+2019/02/01 10:54:41.212,   13.700,  9.0981e-006,
+2019/02/01 10:54:41.712,   13.800,  9.6261e-006,
+2019/02/01 10:54:42.212,   13.900,  9.7696e-006,
+2019/02/01 10:54:42.712,   14.000,  9.5093e-006,
+2019/02/01 10:54:43.212,   14.100,  8.6381e-006,
+2019/02/01 10:54:43.712,   14.200,  7.6585e-006,
+<?xml version="1.0" encoding="us-ascii"?>
+<ConfigurationData>
+   <CommunicationParameters
+      Port="COM3"
+      Baud="9600"
+      PacketFrequency="5.0"
+      PacketTimeout="1.0"
+      CommunicationsType="1"
+      UserFrequency="5.0"
+      UserTimeout="1.0"
+      NamedPort=""
+   />
+
+   <ConfigurationParameters
+      Filename="C:\Users\cxh002\Desktop\RGA CONFIG FILES\rga_working_cal.cfg"
+      Description="Air Leak + PTA"
+      TimeStamp="07e3000200050001000a0036002c0283"
+      DateTime="2/1/2019 10:54:44 AM"
+      Caption="6507"
+      Serial="6507"
+      Model="300"
+   />
+
+   <ScanParameters
+      ScanSpeed="2"
+      LowMass="1"
+      HighMass="310"
+      SamplesPerAMU="10"
+   />
+
+   <OperatingParameters
+      Mode="Mass sweep"
+      Focus1="-20"
+      Focus2="-68"
+      ElectronEnergy="70"
+      FilamentEmission="2.0"
+      AutoZero="Off"
+      ScanMode="Sweep"
+      Filament="0"
+      PressureUnits="Pascal"
+      EnableElectronMultiplier="1"
+      MultiplierVoltage="1095"
+      FilamentForceOffStartup="0"
+   />
+
+   <CalibrationParameters
+      LowCalMass="1"
+      LowCalResolution="572"
+      LowCalPosition="0.44"
+      LowCalIonEnergy="5.0"
+      HighCalMass="300"
+      HighCalResolution="1670"
+      HighCalPosition="0.40"
+      HighCalIonEnergy="5.0"
+      TotalAmpOffset="2000"
+      PartialAmpOffset="2475"
+      TotalIntegratingCap="10.00"
+      PartialIntegratingCap="3.00"
+      RFSettleTime="50"
+      SWSettleTime="10"
+      Pirani1ATM="1.98700"
+      PiraniZero="0.31300"
+      PiraniAutoRecalibrate="0"
+      PartialSensitivity="6.00e-004"
+      TotalSensitivity="1.00e+001"
+      debug="0"
+   />
+
+   <LogFileParameters
+      Mode="2"
+      FileName=""
+      DirectoryName="C:\Users\cxh002\Desktop\rga_data"
+      CreationOption="0"
+      NSweeps="1"
+      FileRecordingOn="1"
+   />
+
+
+   <PrintingParameters
+      InvertColors="1"
+      ShowConfigurationFile="1"
+      ShowDescription="1"
+      ShowTotalPressure="1"
+      ShowPiraniPressure="1"
+      DateFormat=""
+      TimeFormat=""
+   />
+
+
+   <WindowParameters>
+       <Frame
+            flags="2"
+            showCmd="3"
+            ptMinPosition.x="-1"
+            ptMinPosition.y="-1"
+            ptMaxPosition.x="-8"
+            ptMaxPosition.y="-31"
+            rcNormalPosition.left="26"
+            rcNormalPosition.top="68"
+            rcNormalPosition.right="910"
+            rcNormalPosition.bottom="417"
+       />
+       <Setup
+            flags="0"
+            showCmd="1"
+            ptMinPosition.x="-1"
+            ptMinPosition.y="-1"
+            ptMaxPosition.x="-1"
+            ptMaxPosition.y="-1"
+            rcNormalPosition.left="659"
+            rcNormalPosition.top="50"
+            rcNormalPosition.right="1362"
+            rcNormalPosition.bottom="610"
+       />
+       <Main
+            flags="2"
+            showCmd="3"
+            ptMinPosition.x="-1"
+            ptMinPosition.y="-1"
+            ptMaxPosition.x="-1"
+            ptMaxPosition.y="-1"
+            rcNormalPosition.left="104"
+            rcNormalPosition.top="104"
+            rcNormalPosition.right="1129"
+            rcNormalPosition.bottom="629"
+       />
+   </WindowParameters>
+
+   <PlotParameters
+      BkColor="Silver"
+      LineColor="Teal"
+      ScanColor="Black"
+      MouseWheel="0"
+      LogYAxis="1"
+   />
+
+</ConfigurationData>
+2019/02/01 10:54:45.088,    0.600,  6.4479e-007,
+2019/02/01 10:54:45.588,    0.700,  4.1566e-007,
+2019/02/01 10:54:46.088,    0.800,  2.8045e-007,
