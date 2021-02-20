@@ -1,6 +1,7 @@
 
 # todo: investigate float imprecision?
 # todo: calibrate Pirani pressure
+# todo: use numpy i guess.
 
 debug=[]
 
@@ -80,19 +81,7 @@ def parse_scans(scan_path, normalize_time=True):
 
 def plot_parsed_scan(scan, x_labels={}, pressure_floor=0, title=None):
     """
-    Plots the scan_indexth scan in scan_path, labelling specified events.
-    
-    scan_path: path to an RGA output file.
-    scan_index: ordinal of the scan in the file. None plots every scan.
-    events: a dictionary of events to label on the plot.
-        Each key is a timestamp, in seconds, and its value is a string description
-        of the event that happened at that time. For example:
-        {
-            181: "turned on gun filament",
-            289: "turned off ion pump"
-        }
-    pressure_floor: y-axis minimum bound.
-        Overridden if the absolute minimum of the data exceeds it.
+    Plots a scan that has already been parsed with parse_scan. Used internally.
     """
 
     xml_root, rows = scan
@@ -148,7 +137,13 @@ def plot_parsed_scan(scan, x_labels={}, pressure_floor=0, title=None):
         event_lines = []
 
         for i, (t, label) in enumerate(x_labels.items()):
-            event_lines.append(ax.axvline(t, linestyle="--", label=label, color=x_label_cmap(i / len(x_labels))))
+            event_lines.append(ax.axvline(
+                t,
+                linestyle="--",
+                label=label,
+                color=x_label_cmap(i / len(x_labels)),
+                zorder=0.5
+            ))
             # todo: x_labels should have a better name
 
         fig.legend(handles = pressure_lines + event_lines) # arrange the legend
@@ -199,8 +194,9 @@ def plot(scan_path, scan_index=0, x_labels={}, pressure_floor=2e-10, title=None)
     scan_index: ordinal of the scan in the file. Use plot_all_scans_in_file to plot every scan.
     x_labels: specifies vertical bars to plot and label.
         For a trend scan:
-            Dictionary. Each key is a timestamp, in seconds. Each value is a string description
-            of the event that happened at that time. For example:
+            Dictionary. Each key is a timestamp, in whatever units the plot uses for the x-axis.
+            (This makes it easier to check when events happen by using your cursor in the matplotlib window.)
+            Each value is a string description of the event that happened at that time. For example:
             {
                 181: "turned on gun filament",
                 289: "turned off ion pump"
@@ -217,7 +213,14 @@ def plot(scan_path, scan_index=0, x_labels={}, pressure_floor=2e-10, title=None)
         title=title
     )
 
-def plot_sweeps_trend(scan_paths, masses, x_labels={}, pressure_floor=2e-10, title="Combined trend"): # improve name
+def plot_combined_trend(scan_paths, masses, x_labels={}, pressure_floor=2e-10, title="Combined trend"):
+    """
+    Combines a bunch of scans and plots their data as a single trend.
+    Use this to turn series of sweeps (and/or trends) into a trend.
+    scan_paths should be an iterable of paths to the scans. Uses every scan in each path.
+    masses should be a tuple of masses to monitor, because you would have way too many
+    lines if you tried to turn a sweep into a trend without narrowing down the masses.
+    """
     combined_rows = []
     for scan_path in scan_paths:
         scans = parse_scans(scan_path, False)
@@ -273,9 +276,12 @@ with open("sweep_series_paths.txt") as file:
     sweep_series_paths = file.read().split("\n")
 
 if 1:
-    plot_sweeps_trend(
-        sweep_series_paths,
-        (2, 18, 40)
+    plot_combined_trend(
+        sweep_series_paths[:100],
+        (2, 18, 40),
+        x_labels={
+            5.272: "brief power outage in Rickey"
+        }
     )
 
 if 0:
