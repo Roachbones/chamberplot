@@ -30,7 +30,7 @@ x_label_cmap = matplotlib.cm.get_cmap("viridis")
 
 scans_cache = {} # Caches parsed scans in case you want to retry a plot without reading files again.
 
-def parse_scans(scan_path, normalize_time=True):
+def parse_scans(scan_path, normalize_time=False):
     """
     Reads the file at scan_path and outputs a list of scans,
     where each scan is a tuple of (xml_data, rows).
@@ -60,7 +60,7 @@ def parse_scans(scan_path, normalize_time=True):
             # t means time, m means mass, p means pressure
             raw_t, raw_m, raw_p = [i.strip() for i in raw_row[:-1].split(", ")]
             
-            t = time.mktime(datetime.datetime.strptime(raw_t, "%Y/%m/%d %H:%M:%S.%f").timetuple())
+            t = datetime.datetime.strptime(raw_t, "%Y/%m/%d %H:%M:%S.%f")
             if t_0 is None:
                 t_0 = t
             if normalize_time:
@@ -96,6 +96,8 @@ def plot_parsed_scan(scan, x_labels={}, pressure_floor=0, title=None):
     
     if mode == "Trend":
         t_final = rows[-1][0]
+        t_unit="s"
+        """
         if t_final > 36000:
             t_unit, t_conversion_factor = "hours", 1/60/60
         elif t_final > 3600:
@@ -104,7 +106,7 @@ def plot_parsed_scan(scan, x_labels={}, pressure_floor=0, title=None):
             t_unit, t_conversion_factor = "s", 1
 
         for row in rows:
-            row[0] *= t_conversion_factor
+            row[0] *= t_conversion_factor"""
             
         ax.set_xlabel("time ({})".format(t_unit))
         
@@ -231,13 +233,14 @@ def plot_combined_trend(scan_paths, masses, x_labels={}, pressure_floor=2e-10, t
             #    print("Warning: {} contains a trend scan. Skipping.")
             #    continue
             combined_rows.extend(rows)
+            combined_rows.append([rows[0][0], 998, 10e-8])
     combined_rows.sort() # sort by time
 
     selected_rows = [list(row) for row in combined_rows if row[1] in masses]
 
     t_0 = selected_rows[0][0]
-    for row in selected_rows:
-        row[0] -= t_0 # normalize time
+    #for row in selected_rows:
+    #    row[0] -= t_0 # normalize time
 
     xml_root.find("OperatingParameters").set("Mode", "Trend") # kinda hacky
 
