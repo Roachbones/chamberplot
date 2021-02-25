@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import xml.etree.ElementTree as ET
 import csv
 from copy import deepcopy
+import os #only used for test stuff
 
 MASS_GUESSES = { # Used in legend labels.
     2: "$H_2$",
@@ -233,7 +234,9 @@ def plot_combined_trend(scan_paths, masses, x_labels={}, pressure_floor=2e-10, t
             #    print("Warning: {} contains a trend scan. Skipping.")
             #    continue
             combined_rows.extend(rows)
-            combined_rows.append([rows[0][0], 998, 10e-8])
+
+            #time-plotting experiment
+            #combined_rows.append([rows[0][0], 998, os.path.getmtime(scan_path)])
     combined_rows.sort() # sort by time
 
     selected_rows = [list(row) for row in combined_rows if row[1] in masses]
@@ -241,6 +244,8 @@ def plot_combined_trend(scan_paths, masses, x_labels={}, pressure_floor=2e-10, t
     t_0 = selected_rows[0][0]
     #for row in selected_rows:
     #    row[0] -= t_0 # normalize time
+
+    
 
     xml_root.find("OperatingParameters").set("Mode", "Trend") # kinda hacky
 
@@ -279,6 +284,44 @@ with open("sweep_series_paths.txt") as file:
     sweep_series_paths = file.read().split("\n")
 
 if 1:
+    first_row_times = []
+    modified_times = []
+    config_parameter_times = []
+    for scan_path in sweep_series_paths[:100]:
+        xml_root, rows = parse_scans(scan_path)[0]
+        first_row_times.append(rows[0][0])
+        modified_times.append(os.path.getmtime(scan_path))
+        config_parameter_times.append(
+            datetime.datetime.strptime(
+                xml_root.find("ConfigurationParameters").get("DateTime"),
+                "%m/%d/%Y %H:%M:%S %p" # example: 2/22/2021 5:20:10 PM
+            )
+        )
+    plt.plot(modified_times, first_row_times)
+
+
+
+if 0:
+    with open("sweep_series_events.txt") as file:
+        event_log = file.read().split("\n")
+        events = {}
+    for entry in event_log:
+        if not entry.startswith(" "):
+            day_entry = entry
+        else:
+            entry = entry[1:]
+            time_string, event_message = entry.split(" ", maxsplit=1)
+            event_time = datetime.datetime.strptime(day_entry + " " + time_string, "%m/%d/%Y %H:%M%p")
+            #print(event_time, event_message)
+            events[event_time] = event_message
+    plot_combined_trend(
+        sweep_series_paths[:10],
+        (2, 18, 40),
+        x_labels=events
+    )
+    
+
+if 0:
     plot_combined_trend(
         sweep_series_paths[:100],
         (2, 18, 40),
