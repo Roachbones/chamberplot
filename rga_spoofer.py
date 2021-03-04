@@ -15,6 +15,7 @@ for real_scan_path in real_scan_paths:
     with open("spoofed_rga_data/" + real_scan_path, "w") as file:
         for real_line in real_lines:
             file.write(real_line)
-            time.sleep(0.01 * random.random())
+            file.flush()
+            time.sleep(0.001 * random.random())
         
         
