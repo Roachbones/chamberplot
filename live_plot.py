@@ -5,7 +5,7 @@ from itertools import count
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-plt.style.use('fivethirtyeight')
+#plt.style.use('fivethirtyeight')
 
 x_values = []
 y_values = []

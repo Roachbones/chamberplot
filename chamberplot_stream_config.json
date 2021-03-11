@@ -1,1 +1,12 @@
-{"nonce": 16, "interesting_masses": [2, 6, 12, 20, 75, 200], "onion_opacity": 0.5, "pressure_floor": 1e-09}
+{
+    "nonce": 35,
+    "interesting_masses": [
+        2,
+        18,
+        19,
+        28,
+        40
+    ],
+    "onion_opacity": 0.7,
+    "pressure_floor": 1e-09
+}
