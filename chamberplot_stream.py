@@ -139,30 +139,30 @@ def animate():
                    
                 p = float(raw_p)
 
-                # add new data to trend
+                # Add new data to trend.
                 if m not in mass_series:
                     mass_series[m] = [t], [p]
                 else:
                     mass_series[m][0].append(t)
                     mass_series[m][1].append(p)
 
-                # update data in sweep
-                if m != 999: # total pressure gets recorded under mass 999 when the rga is in trend mode. disregard that
+                # Update data in sweep.
+                if m != 999: # Don't include the total pressure reading in the sweep.
                     sweep_pressures[m] = p
                 
-                if last_mass and m < last_mass and current_sweep_artist: # We've gone backwards, so onionskin the old data
-                    current_sweep_artist.set_color("Orchid") # Change color to distinguish from newest data
-                    current_sweep_artist = None # Don't bother trying to .remove() it later
+                if last_mass and m < last_mass and current_sweep_artist: # We've gone backwards, so onionskin the old data.
+                    current_sweep_artist.set_color("Orchid") # Change color to distinguish from newest data.
+                    current_sweep_artist = None # Don't bother trying to remove the artist later.
                     for artist in sweep_ax.lines:
                         alpha = artist.get_alpha() or 1 # alpha is None by default, in which case use 1 instead
                         if alpha < 0.1:
                             artist.remove() # artist is vanishingly transparent, so just remove it.
                         else:
-                            artist.set_alpha(alpha * onion_opacity) # onionskin
+                            artist.set_alpha(alpha * onion_opacity) # Onionskin old data.
 
                 last_mass = m
 
-        # Check configuration file. (not very efficient, but we have to read files every frame anyway)
+        # Check configuration file. (Not very efficient, but we have to read files every frame anyway.)
         with open("chamberplot_stream_config.json") as file:
             config = json.load(file)
 
