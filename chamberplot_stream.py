@@ -90,23 +90,22 @@ def mass_label(m):
 ## Set up figure.
 fig, (trend_ax, sweep_ax) = plt.subplots(2, 1)
 fig.suptitle("Live Residual Gas Analysis", size=20, weight="bold")
-fig.subplots_adjust(hspace=0.4) # adjust margin between subplots
+fig.subplots_adjust(hspace=0.4) # Adjust margin between subplots.
 
 ## Set up trend subplot.
 trend_ax.set_title("Trend View")
 trend_ax.set_xlabel("time")
 trend_ax.set_yscale("log")
 trend_ax.set_ylabel("relative pressure (Pa)") # assuming that the rga is set to Pa
-trend_ax.yaxis.grid(True) # Dr. Howald likes gridlines
+trend_ax.yaxis.grid(True) # Add horizontal gridlines because Dr. Howald likes them.
 trend_artists = []
-event_lines = [] #unused
 mass_series = {}
 
 ## Set up sweep subplot.
 sweep_ax.set_title("Sweep View")
 sweep_ax.set_xlabel("mass (amu)")
 sweep_ax.set_ylabel("relative pressure (Pa)") # assuming that the rga is set to Pa
-sweep_ax.yaxis.grid(True) # Dr. Howald likes gridlines
+sweep_ax.yaxis.grid(True) # Add horizontal gridlines because Dr. Howald likes them.
 #sweep_ax.xaxis.grid(True) # Uncomment this to add vertical gridlines if you want.
 sweep_ax.xaxis.set_major_locator(plt.MultipleLocator(10)) # major ticks every 10 amu
 sweep_ax.xaxis.set_minor_locator(plt.MultipleLocator(1)) # minor ticks every 1 amu
