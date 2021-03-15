@@ -1,23 +1,29 @@
 
 # todo: investigate float imprecision?
-# todo: calibrate Pirani pressure
-# todo: use numpy i guess.
 
-debug=[]
-
+import csv
 import datetime, time
 import matplotlib
 import matplotlib.pyplot as plt
-#import numpy as np
+from matplotlib import rcParams
 import xml.etree.ElementTree as ET
-import csv
 from copy import deepcopy
-import os #only used for test stuff
+import os
+
+# Set default font
+rcParams["font.sans-serif"] = ["Ubuntu"]
 
 MASS_GUESSES = { # Used in legend labels.
     2: "$H_2$",
+    12: "$C$",
+    16: "$O$, $CH_4$",
+    17: "$HO$",
     18: "$H_2O$",
-    40: "Ar"
+    19: "$F$",
+    28: "$N_2$",
+    40: "$Ar$",
+    44: "$CO_2$",
+    178: "C_8H_18S_2"
 }
 
 # Try to give every mass we're gonna plot a unique and consistent color, loosely related to its magnitude.
@@ -25,9 +31,10 @@ MASS_GUESSES = { # Used in legend labels.
 expected_masses = (2, 12, 16, 17, 28, 40, 44)
 mass_cmap = matplotlib.cm.get_cmap("plasma")
 MASS_PALETTE = {mass: mass_cmap(i / len(expected_masses)) for i, mass in enumerate(expected_masses)}
+MASS_PALETTE[5] = "black" # total pressure
 MASS_PALETTE[999] = "grey" # total pressure
 
-x_label_cmap = matplotlib.cm.get_cmap("viridis")
+x_label_cmap = matplotlib.cm.get_cmap("viridis") # color gradient used for event lines
 
 scans_cache = {} # Caches parsed scans in case you want to retry a plot without reading files again.
 
@@ -38,6 +45,9 @@ def parse_scans(scan_path, normalize_time=False):
     xml_data is an xml tree of the scan's metadata.
     rows is a list of tuples of (time, mass, pressure) representing the data points.
     skip_xml should be true if you don't need to parse the xml.
+
+    This should probably be restructured so it makes a dictionary of the
+    important xml information instead of returning the whole xml root.
     """
     if scan_path in scans_cache:
         return scans_cache[scan_path]
@@ -53,8 +63,8 @@ def parse_scans(scan_path, normalize_time=False):
         xml_part, csv_part = raw_scan[:xml_length], raw_scan[xml_length + 1:].strip()
         xml_root = ET.fromstring(xml_part)
 
-        xml_info = {
-            "DateTime": xml_root.find("ConfigurationParameters").get("DateTime"),
+        #xml_info = {
+        #    "DateTime": xml_root.find("ConfigurationParameters").get("DateTime"),
 
         raw_rows = csv_part.split("\n")
         
@@ -65,10 +75,12 @@ def parse_scans(scan_path, normalize_time=False):
             raw_t, raw_m, raw_p = [i.strip() for i in raw_row[:-1].split(", ")]
             
             t = datetime.datetime.strptime(raw_t, "%Y/%m/%d %H:%M:%S.%f")
+            if normalize_time:
+                t = t.timestamp()
             if t_0 is None:
                 t_0 = t
             if normalize_time:
-                t = t - t_0 # normalize time
+                t = t - t_0
 
             m = float(raw_m)            
             p = float(raw_p)
@@ -134,7 +146,7 @@ def plot_parsed_scan(scan, x_labels={}, pressure_floor=0, title=None):
                 label = "Total pressure"
             else:
                 if m in MASS_GUESSES:
-                    label = "{} ({}?)".format(m, MASS_GUESSES[m])
+                    label = "{} ({})".format(m, MASS_GUESSES[m])
                 else:
                     label = str(m)
                 
@@ -174,6 +186,7 @@ def plot_parsed_scan(scan, x_labels={}, pressure_floor=0, title=None):
 
     plt.savefig("tmp.png", dpi=256)
     plt.show()
+    return fig
 
 def plot_all_scans_in_file(scan_path):
     """
@@ -192,7 +205,7 @@ def plot_all_scans_in_file(scan_path):
         plot_parsed_scan(scan)
     return
 
-def plot(scan_path, scan_index=0, x_labels={}, pressure_floor=2e-10, title=None):
+def plot(scan_path, scan_index=0, x_labels={}, pressure_floor=2e-10, title=None, normalize_time=False):
     """
     Plots the scan_indexth scan in scan_path, labelling specified events.
     
@@ -212,8 +225,8 @@ def plot(scan_path, scan_index=0, x_labels={}, pressure_floor=2e-10, title=None)
     pressure_floor: y-axis minimum bound.
         Overridden if the absolute minimum of the data exceeds it.
     """
-    plot_parsed_scan(
-        parse_scans(scan_path)[scan_index],
+    return plot_parsed_scan(
+        parse_scans(scan_path, normalize_time=True)[scan_index],
         x_labels=x_labels,
         pressure_floor=pressure_floor,
         title=title
@@ -233,26 +246,16 @@ def plot_combined_trend(scan_paths, masses, x_labels={}, pressure_floor=2e-10, t
         if len(scans) != 1:
             print("Warning: {} contains {} scans.".format(scan_path, len(scans)))
         for xml_root, rows in scans:
-            #if xml_root.find("OperatingParameters").get("Mode") != "Mass sweep":
-            #    print("Warning: {} contains a trend scan. Skipping.")
-            #    continue
             combined_rows.extend(rows)
 
-            #time-plotting experiment
-            #combined_rows.append([rows[0][0], 998, os.path.getmtime(scan_path)])
     combined_rows.sort() # sort by time
 
     selected_rows = [list(row) for row in combined_rows if row[1] in masses]
 
     t_0 = selected_rows[0][0]
-    #for row in selected_rows:
-    #    row[0] -= t_0 # normalize time
 
-    
-
-    xml_root.find("OperatingParameters").set("Mode", "Trend") # kinda hacky
-
-    debug.append(selected_rows)
+    # We should change how xml is parsed and used so this is less hacky.
+    xml_root.find("OperatingParameters").set("Mode", "Trend")
     
     plot_parsed_scan(
         (xml_root, selected_rows),
@@ -261,83 +264,12 @@ def plot_combined_trend(scan_paths, masses, x_labels={}, pressure_floor=2e-10, t
         title=title
     )
 
-def frankenstein(scan_paths, output_scan_path):
-    """
-    Combines all the scans in scan_paths into a single file. Not very useful.
-    Really just concatenates the files.
-    """
-    concatenated_raw_data = ""
-    for scan_path in scan_paths:
-        with open(scan_path) as file:
-            concatenated_raw_data += file.read()
-    with open(output_scan_path, "w") as file:
-        file.write(concatenated_raw_data)
 
-EVENTS = { # time (in seconds): description. For example:  181: "turned on gun filament"
-}
-
-SCAN_PATH = "rga_data/MassSpecData-06507-20210210-171042.csv"
-SCAN_INDEX = None # each file can contain multiple scans due to a bug in the software.
-
-#plot(SCAN_PATH, SCAN_INDEX, EVENTS)
-
-#plot_all_scans_in_file(SCAN_PATH)
-
-def get_scan_paths():
-    return ["spoofed_rga_data/" + i for i in os.listdir("spoofed_rga_data") if i.startswith("MassSpecData")]
-
-def scan_stream():
-    """
-    Yields lines of scans as they are generated by the RGA.
-    Yields None when there are not yet more lines to yield.
-    """
-    scan_paths = get_scan_paths()
-    while not scan_paths:
-        yield None # basically means check again later
-        scan_paths = get_scan_paths()
-        
-    scan_paths.sort()
-    live_scan_path = scan_paths[-1] # scan_paths[-1] is the most recent scan path
-    file = open(scan_paths[-1])
-    while True:
-        
-        scan_paths = get_scan_paths()
-        
-        while True: # yield all new lines in the current file
-            cursor = file.tell()
-            line = file.readline()
-            if line and line.endswith("\n"):
-                yield line
-            else: # no more lines, or line not done being written yet
-                file.seek(cursor)
-                break
-        
-        scan_paths.sort()
-        if live_scan_path != scan_paths[-1]: # current scan is no longer the most recent
-            file.close()
-            live_scan_path = scan_paths[scan_paths.index(live_scan_path) + 1] # this code is clunky sorry >.<"
-            file = open(live_scan_path)
-        else: # we're waiting for new data
-            yield None # "check again later"
-            
-if 1:
-    for line in scan_stream():
-        if line is None:
-            time.sleep(0.01)
-        else:
-            print(line[:-1])
-
-def plot_live():
-    for line in scan_stream():
-        if line is None: # no lines to consume. wait for more
-            time.sleep(0.01)
-        
-
-
-with open("sweep_series_paths.txt") as file:
-    sweep_series_paths = file.read().split("\n")
 
 if 0:
+    with open("sweep_series_paths.txt") as file:
+        sweep_series_paths = file.read().split("\n")
+    
     first_row_times = []
     modified_times = []
     config_parameter_times = []
@@ -366,7 +298,6 @@ if 0:
             entry = entry[1:]
             time_string, event_message = entry.split(" ", maxsplit=1)
             event_time = datetime.datetime.strptime(day_entry + " " + time_string, "%m/%d/%Y %H:%M%p")
-            #print(event_time, event_message)
             events[event_time] = event_message
     plot_combined_trend(
         sweep_series_paths[:10],
@@ -390,15 +321,20 @@ if 0:
         pressure_floor = 2e-9
     )
 
-if 0:
-    plot(
+if 1:
+    fig = plot(
         "rga_data/MassSpecData-06507-20210210-171042.csv",
         6,
         {
-            181: "turned on gun filament",
+            181: "turned on ion gun filament",
             289: "opened Ar leak valve, turned off ion pump",
             349: "closed Ar leak valve",
-            370: "turned up gun",
-            569: "turned off gun, turned on ion pump"
-        }
+            370: "turned up ion gun",
+            569: "turned off ion gun, turned on ion pump"
+        },
+        normalize_time=True,
+        title="One Round of Sputtering"
     )
+    fig.set_size_inches(9, 7)
+    fig.savefig("figures/sputtering_run.png", dpi=256)
+    fig.savefig("figures/sputtering_run.svg", dpi=256)
