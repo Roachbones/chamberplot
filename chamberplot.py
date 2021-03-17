@@ -257,7 +257,7 @@ def plot_combined_trend(scan_paths, masses, x_labels={}, pressure_floor=2e-10, t
     # We should change how xml is parsed and used so this is less hacky.
     xml_root.find("OperatingParameters").set("Mode", "Trend")
     
-    plot_parsed_scan(
+    return plot_parsed_scan(
         (xml_root, selected_rows),
         x_labels=x_labels,
         pressure_floor=pressure_floor,
@@ -287,7 +287,9 @@ if 0:
 
 
 
-if 0:
+if 1:
+    with open("sweep_series_paths.txt") as file:
+        sweep_series_paths = file.read().split("\n")
     with open("sweep_series_events.txt") as file:
         event_log = file.read().split("\n")
         events = {}
@@ -300,9 +302,9 @@ if 0:
             event_time = datetime.datetime.strptime(day_entry + " " + time_string, "%m/%d/%Y %H:%M%p")
             events[event_time] = event_message
     plot_combined_trend(
-        sweep_series_paths[:10],
-        (2, 18, 40),
-        x_labels=events
+        sweep_series_paths,
+        (2, 18, 40)
+        #x_labels=events
     )
     
 
@@ -321,7 +323,7 @@ if 0:
         pressure_floor = 2e-9
     )
 
-if 1:
+if 0:
     fig = plot(
         "rga_data/MassSpecData-06507-20210210-171042.csv",
         6,

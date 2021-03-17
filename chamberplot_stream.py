@@ -90,6 +90,7 @@ def mass_label(m):
 ## Set up figure.
 fig, (trend_ax, sweep_ax) = plt.subplots(2, 1)
 fig.suptitle("Live Residual Gas Analysis", size=20, weight="bold")
+fig.canvas.set_window_title("Live Residual Gas Analysis")
 fig.subplots_adjust(hspace=0.4) # Adjust margin between subplots.
 
 ## Set up trend subplot.
