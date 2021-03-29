@@ -23,16 +23,29 @@ MASS_GUESSES = { # Used in legend labels.
     28: "$N_2$",
     40: "$Ar$",
     44: "$CO_2$",
-    178: "C_8H_18S_2"
+    178: "$C_8H_18S_2$"
 }
 
 # Try to give every mass we're gonna plot a unique and consistent color, loosely related to its magnitude.
 # This way, different graphs in the paper use consistent colors for masses.
-expected_masses = (2, 12, 16, 17, 28, 40, 44)
+expected_masses = (2, 12, 16, 17, 28, 40, 178)
 mass_cmap = matplotlib.cm.get_cmap("plasma")
 MASS_PALETTE = {mass: mass_cmap(i / len(expected_masses)) for i, mass in enumerate(expected_masses)}
 MASS_PALETTE[5] = "black" # total pressure
 MASS_PALETTE[999] = "grey" # total pressure
+
+# Actually, let's generate palettes on the fly instead. I don't care about consistency across graphs.
+def generate_mass_palette(masses):
+    """
+    Generates a color palette for an iterable of masses.
+    Returns a dictionary of the form {mass: color}.
+    """
+    mass_cmap = matplotlib.cm.get_cmap("plasma")
+    palette = {mass: mass_cmap(i / len(masses)) for i, mass in enumerate(masses)}
+    palette[999] = "grey" # total pressure
+    palette[5] = "black" # Pirani pressure
+    return palette
+
 
 x_label_cmap = matplotlib.cm.get_cmap("viridis") # color gradient used for event lines
 
@@ -95,7 +108,7 @@ def parse_scans(scan_path, normalize_time=False):
     
     return scans    
 
-def plot_parsed_scan(scan, x_labels={}, pressure_floor=0, title=None):
+def plot_parsed_scan(scan, x_labels={}, pressure_floor=0, title=None, plot_kwargs={}):
     """
     Plots a scan that has already been parsed with parse_scan. Used internally.
     """
@@ -124,7 +137,9 @@ def plot_parsed_scan(scan, x_labels={}, pressure_floor=0, title=None):
         for row in rows:
             row[0] *= t_conversion_factor"""
             
-        ax.set_xlabel("time ({})".format(t_unit))
+        #ax.set_xlabel("time ({})".format(t_unit))
+
+        ax.set_xlabel("date and time")
         
         mass_series = {}
         for t, m, p in rows:
@@ -134,6 +149,8 @@ def plot_parsed_scan(scan, x_labels={}, pressure_floor=0, title=None):
                 mass_series[m][0].append(t)
                 mass_series[m][1].append(p)
 
+        mass_palette = generate_mass_palette(mass_series.keys())
+        
         pressure_lines = []
         for i, (m, (times, pressures)) in enumerate(sorted(mass_series.items())):
             if m == int(m):
@@ -150,7 +167,7 @@ def plot_parsed_scan(scan, x_labels={}, pressure_floor=0, title=None):
                 else:
                     label = str(m)
                 
-            pressure_lines.append(*ax.plot(times, pressures, label=label, color=MASS_PALETTE.get(m)))
+            pressure_lines.append(*ax.plot(times, pressures, label=label, color=mass_palette[m], **plot_kwargs))
 
         event_lines = []
 
@@ -177,15 +194,15 @@ def plot_parsed_scan(scan, x_labels={}, pressure_floor=0, title=None):
             masses.append(m)
             pressures.append(p)
 
-        ax.plot(masses, pressures)
+        ax.plot(masses, pressures, **plot_kwargs)
 
     # trim noise floor
     bottom, top = ax.get_ylim()
-    print(bottom, top, pressure_floor)
+    #print(bottom, top, pressure_floor)
     ax.set_ylim(bottom=max(bottom, pressure_floor), top=top)
 
-    plt.savefig("tmp.png", dpi=256)
-    plt.show()
+    #plt.savefig("tmp.png", dpi=256)
+    #plt.show()
     return fig
 
 def plot_all_scans_in_file(scan_path):
@@ -232,7 +249,7 @@ def plot(scan_path, scan_index=0, x_labels={}, pressure_floor=2e-10, title=None,
         title=title
     )
 
-def plot_combined_trend(scan_paths, masses, x_labels={}, pressure_floor=2e-10, title="Combined trend"):
+def plot_combined_trend(scan_paths, masses, x_labels={}, pressure_floor=2e-10, title="Combined trend", plot_kwargs={}):
     """
     Combines a bunch of scans and plots their data as a single trend.
     Use this to turn series of sweeps (and/or trends) into a trend.
@@ -244,7 +261,8 @@ def plot_combined_trend(scan_paths, masses, x_labels={}, pressure_floor=2e-10, t
     for scan_path in scan_paths:
         scans = parse_scans(scan_path, False)
         if len(scans) != 1:
-            print("Warning: {} contains {} scans.".format(scan_path, len(scans)))
+            #print("Warning: {} contains {} scans.".format(scan_path, len(scans)))
+            pass
         for xml_root, rows in scans:
             combined_rows.extend(rows)
 
@@ -261,7 +279,8 @@ def plot_combined_trend(scan_paths, masses, x_labels={}, pressure_floor=2e-10, t
         (xml_root, selected_rows),
         x_labels=x_labels,
         pressure_floor=pressure_floor,
-        title=title
+        title=title,
+        plot_kwargs=plot_kwargs
     )
 
 
@@ -286,8 +305,68 @@ if 0:
     plt.plot(modified_times, first_row_times)
 
 
-
 if 1:
+    max_mass = 200
+    masses = [i for i in range(1, max_mass) if i != 5]
+    mass_cmap = matplotlib.cm.get_cmap("turbo")
+    mass_palette = {mass: mass_cmap(i / len(masses)) for i, mass in enumerate(masses)}
+    for m in masses:
+        scan_paths = ["rga-3-10/" + i for i in os.listdir("rga-3-10") if i.startswith("MassSpecData")]
+        scan_paths.sort()
+        fig = plot_combined_trend(
+            scan_paths[4:-1],
+            (m,),
+            title="Thermal Desorption Ramp",
+            pressure_floor=1e-9,
+            x_labels={
+                datetime.datetime.strptime("3/10/2021 15:39", "%m/%d/%Y %H:%M"): "began thermal desorption at 2V",
+                datetime.datetime.strptime("3/10/2021 20:14", "%m/%d/%Y %H:%M"): "maxed out heater voltage, from 112V to 133V"
+            },
+            plot_kwargs = {
+                "linestyle": "",
+                "marker": "."
+            }
+        )
+        ax = fig.axes[0]
+        ax.lines[0].set_color(mass_palette[m])
+        _ = ax.set_ylim(bottom=1e-9, top=1e-5)
+        _ = ax.set_xlim(
+            left=datetime.datetime.strptime("3/10/2021 15:30", "%m/%d/%Y %H:%M"),
+            right=datetime.datetime.strptime("3/10/2021 20:45", "%m/%d/%Y %H:%M")
+        )
+        [c for c in fig.get_children() if isinstance(c, matplotlib.legend.Legend)][0].remove()
+        _ = ax.text((m / max_mass) * 1.3 - 0.15, -0.15, str(m), color=mass_palette[m], fontsize="small", transform=ax.transAxes)
+        #fig.axes[0].text(0, 0, "HELLO, WORLD", color="purple", fontsize="large")
+        fig.set_size_inches(9, 7)
+        fig.subplots_adjust(top=0.83, right=0.83)
+        print(m, end=" ")
+        fig.savefig("layers/layer_" + str(m).zfill(3) + ".png", dpi=256, transparent=True)
+
+
+if 0:
+    scan_paths = ["rga-3-10/" + i for i in os.listdir("rga-3-10") if i.startswith("MassSpecData")]
+    scan_paths.sort()
+    fig = plot_combined_trend(
+        scan_paths[4:-1],
+        (32, 33, 34, 178),
+        title="Thermal Desorption Ramp",
+        pressure_floor=1e-9,
+        x_labels={
+            datetime.datetime.strptime("3/10/2021 15:39", "%m/%d/%Y %H:%M"): "began thermal desorption at 2V",
+            datetime.datetime.strptime("3/10/2021 20:14", "%m/%d/%Y %H:%M"): "maxed out heater voltage, from 112V to 133V"
+        },
+        plot_kwargs = {
+            "linestyle": "",
+            "marker": "."
+        }
+    )
+    fig.set_size_inches(9, 7)
+    fig.subplots_adjust(top=0.83, right=0.83)
+    fig.savefig("figures/desorption_ramp.png", dpi=256)
+    fig.savefig("figures/desorption_ramp.svg", dpi=256)
+
+
+if 0:
     with open("sweep_series_paths.txt") as file:
         sweep_series_paths = file.read().split("\n")
     with open("sweep_series_events.txt") as file:
